@@ -1,0 +1,3 @@
+com\nuliyang\AuthApplication.class
+com\nuliyang\service\AuthService.class
+com\nuliyang\mapper\AuthMapper.class

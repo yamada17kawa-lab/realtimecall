@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.12</version>
+        <relativePath/> <!-- 从仓库拉取父依赖，正确 -->
+    </parent>
+    <packaging>pom</packaging>
+    <!-- 聚合子模块（顺序不影响，Maven会按依赖关系构建） -->
+    <modules>
+        <module>common</module> <!-- 建议先聚合common，再聚合services（因services依赖common） -->
+        <module>services</module>
+    </modules>
+    <groupId>com.example</groupId>
+    <artifactId>realtimecall</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>realtimecall微服务项目</name>
+    <description>realtimecall</description>
+    <properties>
+        <java.version>17</java.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
+        <mysql.version>8.0.33</mysql.version>
+        <!-- 新增：common子模块版本（统一管理） -->
+        <common-model.version>0.0.1-SNAPSHOT</common-model.version>
+        <!-- 新增：实时通话相关依赖版本 -->
+        <mybatis-plus.version>3.5.7</mybatis-plus.version>
+        <lombok.version>1.18.34</lombok.version>
+    </properties>
+    <!-- 统一依赖版本（子模块依赖时无需写version） -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Spring Cloud Alibaba 依赖（正确） -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- MySQL 依赖（正确） -->
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- 新增：common-model 模块版本管理 -->
+            <dependency>
+                <groupId>com.example</groupId>
+                <artifactId>model</artifactId>
+                <version>${common-model.version}</version>
+            </dependency>
+            <!-- 新增：MyBatis-Plus 版本管理（避免子模块版本冲突） -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <!-- 新增：Lombok 版本管理 -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope> <!-- 标记为编译时依赖，避免打包重复 -->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <plugins>
+    <!-- 根模块无需 spring-boot-maven-plugin（仅业务模块需要），删除以下配置 -->
+    <!-- 错误配置：<plugin> org.springframework.boot:spring-boot-maven-plugin </plugin> -->
+        </plugins>
+    </build>
+</project>
