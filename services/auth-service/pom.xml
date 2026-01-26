@@ -8,6 +8,7 @@
         <artifactId>services</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+
     <artifactId>auth-service</artifactId>
     <packaging>jar</packaging> <!-- 业务模块：可执行jar -->
     <properties>
@@ -16,6 +17,25 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <!-- 依赖MyBatis-Plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.5</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>6.1.5</version> <!-- 与 Spring Boot 3.2.x 兼容 -->
+        </dependency>
         <!-- 核心：依赖common的model模块（无需写version） -->
         <dependency>
             <groupId>com.example</groupId>
@@ -28,8 +48,8 @@
         </dependency>
         <!-- MySQL 依赖（按需添加） -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
         </dependency>
     </dependencies>
         <!-- 业务模块：添加 spring-boot-maven-plugin（用于打包可执行jar） -->

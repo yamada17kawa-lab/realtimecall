@@ -5,33 +5,84 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.12</version>
+        <version>3.0.12</version>
         <relativePath/> <!-- 从仓库拉取父依赖，正确 -->
     </parent>
     <packaging>pom</packaging>
+
     <!-- 聚合子模块（顺序不影响，Maven会按依赖关系构建） -->
     <modules>
         <module>common</module> <!-- 建议先聚合common，再聚合services（因services依赖common） -->
         <module>services</module>
     </modules>
+
+
     <groupId>com.example</groupId>
     <artifactId>realtimecall</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>realtimecall微服务项目</name>
     <description>realtimecall</description>
+
     <properties>
         <java.version>17</java.version>
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
         <mysql.version>8.0.33</mysql.version>
-        <!-- 新增：common子模块版本（统一管理） -->
         <common-model.version>0.0.1-SNAPSHOT</common-model.version>
-        <!-- 新增：实时通话相关依赖版本 -->
-        <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <lombok.version>1.18.34</lombok.version>
+        <spring-cloud-openfeign.version>3.1.8</spring-cloud-openfeign.version>
+        <spring-cloud-loadbalancer.version>3.1.3</spring-cloud-loadbalancer.version>
+        <seata.version>1.6.0</seata.version>
     </properties>
+
     <!-- 统一依赖版本（子模块依赖时无需写version） -->
     <dependencyManagement>
         <dependencies>
+
+            <!-- Seata -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <version>${seata.version}</version>
+            </dependency>
+
+            <!-- Nacos Config -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- OpenFeign -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-openfeign</artifactId>
+                <version>${spring-cloud-openfeign.version}</version>
+            </dependency>
+
+            <!-- Sentinel -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+                <version>${spring-cloud-alibaba.version}</version>
+            </dependency>
+
+            <!-- LoadBalancer - 让 Spring Cloud Dependencies 管理版本 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+                <version>${spring-cloud-loadbalancer.version}</version>
+            </dependency>
+
+            <!-- Spring Cloud 官方 BOM（必须） -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2022.0.4</version> <!-- 与 spring-boot-starter-parent 3.2.x 兼容 -->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Spring Cloud Alibaba 依赖（正确） -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
@@ -42,8 +93,8 @@
             </dependency>
             <!-- MySQL 依赖（正确） -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
                 <version>${mysql.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -52,12 +103,6 @@
                 <groupId>com.example</groupId>
                 <artifactId>model</artifactId>
                 <version>${common-model.version}</version>
-            </dependency>
-            <!-- 新增：MyBatis-Plus 版本管理（避免子模块版本冲突） -->
-            <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
-                <version>${mybatis-plus.version}</version>
             </dependency>
             <!-- 新增：Lombok 版本管理 -->
             <dependency>
