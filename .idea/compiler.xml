@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gw" />
+        <module name="exception" />
         <module name="auth-service" />
         <module name="utils" />
         <module name="signal-service" />
@@ -28,6 +29,7 @@
       <module name="Utils" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="common" options="" />
+      <module name="exception" options="-parameters" />
       <module name="feign" options="-parameters" />
       <module name="fiegn" options="-parameters" />
       <module name="gateway" options="" />

@@ -19,6 +19,13 @@
     <dependencies>
 
 
+        <!-- 异常处理 -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>exception</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!--服务发现 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
