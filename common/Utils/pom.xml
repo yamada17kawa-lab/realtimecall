@@ -5,18 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>realtimecall</artifactId>
+        <artifactId>common</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>common</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>model</module>
-        <module>feign</module>
-        <module>utils</module>
-    </modules>
+    <artifactId>utils</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -25,17 +18,23 @@
     </properties>
 
     <dependencies>
-        <!-- 只需基础依赖，不要引入 Spring Boot Starter -->
+        <!-- JWT -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <scope>provided</scope> <!-- 仅编译时需要 -->
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
         </dependency>
-        <!-- 如果用 Lombok -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>0.11.5</version>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

@@ -1,4 +1,6 @@
 com\nuliyang\result\Result.class
+com\nuliyang\dto\UserUpdateDto.class
 com\nuliyang\dto\LoginDto.class
 com\nuliyang\dto\RegisterDto.class
 com\nuliyang\entity\UserEntity.class
+com\nuliyang\vo\UserVo.class

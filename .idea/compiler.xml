@@ -7,8 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="model" />
+        <module name="gw" />
         <module name="auth-service" />
+        <module name="utils" />
+        <module name="signal-service" />
+        <module name="model" />
         <module name="user-service" />
         <module name="feign" />
       </profile>
@@ -16,19 +19,25 @@
     <bytecodeTargetLevel>
       <module name="Entity" target="17" />
       <module name="fiegn" target="17" />
+      <module name="Utils" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Entity" options="-parameters" />
+      <module name="Utils" options="-parameters" />
       <module name="auth-service" options="-parameters" />
       <module name="common" options="" />
       <module name="feign" options="-parameters" />
       <module name="fiegn" options="-parameters" />
+      <module name="gateway" options="" />
+      <module name="gw" options="-parameters" />
       <module name="model" options="-parameters" />
       <module name="realtimecall" options="" />
       <module name="services" options="" />
+      <module name="signal-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
+      <module name="utils" options="-parameters" />
     </option>
   </component>
 </project>

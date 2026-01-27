@@ -14,6 +14,7 @@
     <modules>
         <module>common</module> <!-- 建议先聚合common，再聚合services（因services依赖common） -->
         <module>services</module>
+        <module>gateway</module>
     </modules>
 
 

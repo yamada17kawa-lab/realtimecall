@@ -8,7 +8,13 @@
     <file url="file://$PROJECT_DIR$/common/model/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/utils/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/gw/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/gateway/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/auth-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/gw/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/services/signal-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/services/user-service/src/main/java" charset="UTF-8" />

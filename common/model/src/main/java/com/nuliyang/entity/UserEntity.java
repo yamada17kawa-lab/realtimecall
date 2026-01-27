@@ -77,5 +77,5 @@ public class UserEntity {
      */
     @TableLogic
     @TableField("is_deleted")
-    private Integer deleted = 0;
+    private Integer isDeleted = 0;
 }
