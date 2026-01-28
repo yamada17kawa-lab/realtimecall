@@ -5,6 +5,7 @@
       <w>nacos服务注册中心</w>
       <w>token已过期</w>
       <w>token无效</w>
+      <w>导入自定义model模块</w>
       <w>缺少用户id</w>
     </words>
   </dictionary>

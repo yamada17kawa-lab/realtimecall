@@ -37,6 +37,7 @@
       <module name="model" options="-parameters" />
       <module name="realtimecall" options="" />
       <module name="services" options="" />
+      <module name="signal" options="" />
       <module name="signal-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
       <module name="utils" options="-parameters" />

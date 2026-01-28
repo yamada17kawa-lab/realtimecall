@@ -3,88 +3,57 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>realtimecall</artifactId>
+        <artifactId>signal</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <packaging>pom</packaging>
-    <modules>
-        <module>auth-service</module>
-        <module>user-service</module>
-    </modules>
-
-    <artifactId>services</artifactId>
+    <artifactId>signal-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
     </properties>
+
 
     <dependencies>
 
 
-        <!-- 引用common的Utils模块 -->
+        <!-- 导入自定义utils模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- Seata -->
-        <dependency>
-            <groupId>io.seata</groupId>
-            <artifactId>seata-spring-boot-starter</artifactId>
-        </dependency>
-
-        <!-- Nacos Config -->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <!-- 核心：依赖common的model模块（无需写version） -->
+        <!-- 导入自定义model模块 -->
         <dependency>
             <groupId>com.example</groupId>
             <artifactId>model</artifactId>
         </dependency>
 
-        <!--依赖feign -->
+        <!-- 导入自定义异常模块 -->
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>feign</artifactId>
+            <artifactId>exception</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- Spring Cloud Alibaba Sentinel -->
+        <!-- WebSocket -->
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
-        <!-- lombok -->
+
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
 
-
-        <!--loadbalancer-->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        </dependency>
-
-
-
     </dependencies>
-
-
-
-
 
 </project>

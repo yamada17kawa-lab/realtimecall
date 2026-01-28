@@ -18,7 +18,8 @@ public enum ErrorCode {
     MODIFY_PASSWORD_PARAMETER_ERROR(10006, "修改密码参数错误"),
     USERNAME_ALREADY_EXISTS(10007, "用户名已存在"),
     USER_NOT_FOUND(500, "用户不存在"),
-    TOKEN_INVALID(401, "Token无效");
+    TOKEN_INVALID(401, "Token无效"),
+    UNKNOWN_SIGNAL_TYPE(400, "未知的信令类型");
 
     private final int code;
     private final String message;

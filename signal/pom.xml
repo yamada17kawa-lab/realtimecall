@@ -5,11 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.example</groupId>
-        <artifactId>services</artifactId>
+        <artifactId>realtimecall</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>signal-service</artifactId>
+    <artifactId>signal</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>signal-service</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
