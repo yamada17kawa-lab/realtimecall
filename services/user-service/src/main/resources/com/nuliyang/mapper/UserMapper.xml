@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nuliyang.mapper.UserMapper">
+    <update id="updateUser">
+        update user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="newPassword != null">
+                password = #{newPassword},
+            </if>
+            <if test="nickname != null">
+                nickname = #{nickname},
+            </if>
+            <if test="phone != null">
+                phone = #{phone},
+            </if>
+            <if test="email != null">
+                email = #{email},
+            </if>
+            <if test="avatar != null">
+                avatar = #{avatar},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted},
+            </if>
+        </set>
+        where id = #{userId}
+    </update>
+
+
+    <insert id="addFriend" parameterType="com.nuliyang.entity.FriendEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `user_friend`
+            (`user_id`, `friend_id`, `status`, `created_at`)
+        VALUES
+            (#{userId}, #{friendId}, #{status}, #{createdAt})
+    </insert>
+
+
+    <select id="getFriendListByUserId"
+            resultType="com.nuliyang.vo.UserVo">
+
+        SELECT
+            u.id,
+            u.username,
+            u.nickname,
+            u.email,
+            u.phone,
+            u.avatar,
+            uf.status AS isOnline
+        FROM user_friend uf
+        LEFT JOIN `user` u
+            ON u.id = uf.friend_id
+        WHERE uf.user_id = #{userId}
+          AND u.status = 0
+        ORDER BY
+            isOnline DESC,
+            u.username COLLATE utf8mb4_zh_0900_as_cs ASC
+
+
+
+    </select>
+
+</mapper>

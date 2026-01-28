@@ -1,4 +1,0 @@
-com\nuliyang\AuthApplication.class
-com\nuliyang\controller\AuthController.class
-com\nuliyang\service\AuthService.class
-com\nuliyang\service\serviceimpl\AuthServiceImpl.class
