@@ -14,12 +14,12 @@ public class SignalMessage {
     /**
      * 发送者 userId
      */
-    private Long from;
+    private String from;
 
     /**
      * 接收者 userId
      */
-    private Long to;
+    private String to;
 
     /**
      * 具体数据（offer / answer / candidate 等）

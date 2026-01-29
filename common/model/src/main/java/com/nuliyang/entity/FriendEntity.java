@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,7 +17,8 @@ import java.time.LocalDateTime;
 @Accessors(chain = true)
 public class FriendEntity {
 
-    @TableId(type = IdType.AUTO)
+    @JsonSerialize(using = ToStringSerializer.class) // 将 Long 转为 String 给前端
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @TableField("user_id")

@@ -1,5 +1,6 @@
 package com.nuliyang.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
@@ -10,7 +11,7 @@ import java.util.List;
 
 
 @Mapper
-public interface UserMapper {
+public interface UserMapper extends BaseMapper<UserEntity> {
 
     /**
      * 根据用户名查询用户

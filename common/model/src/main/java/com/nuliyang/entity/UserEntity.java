@@ -2,6 +2,8 @@ package com.nuliyang.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,9 +15,10 @@ import java.time.LocalDateTime;
 public class UserEntity {
 
     /**
-     * 用户ID（主键，自增）
+     * 用户ID
      */
-    @TableId(value = "id", type = IdType.AUTO)
+    @JsonSerialize(using = ToStringSerializer.class) // 将 Long 转为 String 给前端
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

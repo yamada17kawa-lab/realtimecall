@@ -55,6 +55,12 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
         String auth = servletRequest.getServletRequest()
                 .getHeader("Authorization");
 
+        if (auth == null || auth.isEmpty()) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED);
+            return false;
+        }
+        log.info("拦截到Authorization: {}", auth);
+
         // 2️⃣ 校验 token
         if (!checkToken(auth)) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -70,6 +76,7 @@ public class AuthHandshakeInterceptor implements HandshakeInterceptor {
 
         // 4️⃣ 存入 WebSocket Session
         attributes.put("userId", userId);
+        log.info("将userId存入session: {}", attributes.get("userId"));
 
         return true; // 允许建立连接
     }

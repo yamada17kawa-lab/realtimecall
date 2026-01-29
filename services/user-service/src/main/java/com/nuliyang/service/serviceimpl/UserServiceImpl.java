@@ -1,5 +1,6 @@
 package com.nuliyang.service.serviceimpl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nuliyang.BizException;
 import com.nuliyang.ErrorCode;
 import com.nuliyang.dto.UserUpdateDto;
@@ -9,6 +10,7 @@ import com.nuliyang.mapper.UserMapper;
 import com.nuliyang.service.UserService;
 import com.nuliyang.vo.UserVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -20,9 +22,10 @@ import java.util.Collections;
 import java.util.List;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
 
 
     private final UserMapper userMapper;
@@ -37,12 +40,13 @@ public class UserServiceImpl implements UserService {
         //先根据用户名从数据库中查出是否已存在
         //如果存在则返回错误
         if (userMapper.findByUsername(userEntity.getUsername()) != null) {
+            log.error("用户名已存在: {}", userEntity.getUsername());
             throw new BizException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
 
         //不存在添加该用户
         userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
-        userMapper.addUser(userEntity.getUsername(), userEntity.getPassword());
+        userMapper.insert(userEntity);
     }
 
 
@@ -55,6 +59,8 @@ public class UserServiceImpl implements UserService {
     public UserEntity getUserByUsername(String username) {
         UserEntity user = userMapper.findByUsername(username);
         if (user == null){
+            //用户不存在
+            log.error("用户不存在: {}", username);
             throw new BizException(ErrorCode.USER_NOT_FOUND);
         }
         return user;

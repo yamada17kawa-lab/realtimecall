@@ -9,6 +9,7 @@ import com.nuliyang.entity.UserEntity;
 import com.nuliyang.result.Result;
 import com.nuliyang.service.AuthService;
 import com.nuliyang.vo.UserVo;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 注册
      */
-    @Transactional(rollbackFor = Exception.class)
+    @GlobalTransactional
     @Override
     public UserVo register(RegisterDto registerDto) {
         //先根据用户名从数据库中查出是否已存在
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
 
 
         //如果存在则返回错误
-        if (userFeign.addUser(user).getCode().equals(500)) {
+        if (userFeign.addUser(user).getCode().equals(ErrorCode.USERNAME_ALREADY_EXISTS.getCode())) {
             throw new BizException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
 

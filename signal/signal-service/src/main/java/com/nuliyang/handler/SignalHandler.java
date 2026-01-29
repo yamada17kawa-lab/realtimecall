@@ -3,6 +3,8 @@ package com.nuliyang.handler;
 import com.nuliyang.model.SignalMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
+
 public interface SignalHandler {
 
     /**
@@ -13,5 +15,5 @@ public interface SignalHandler {
     /**
      * 处理信令
      */
-    void handle(SignalMessage message, WebSocketSession session);
+    void handle(SignalMessage message, WebSocketSession session) throws IOException;
 }

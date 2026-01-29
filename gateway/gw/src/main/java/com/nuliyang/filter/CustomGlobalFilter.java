@@ -35,6 +35,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 1️⃣ 放行登录、注册接口
         if (path.startsWith("/auth/login") || path.startsWith("/auth/register"))
         {
+            log.info("放行登录、注册接口: {}",  path);
             return chain.filter(exchange);
         }
 

@@ -1,11 +1,12 @@
 package com.nuliyang.ws;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuliyang.BizException;
 import com.nuliyang.ErrorCode;
 import com.nuliyang.handler.SignalHandler;
 import com.nuliyang.model.SignalMessage;
+import com.nuliyang.store.SessionStore;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class SignalWebSocketHandler extends TextWebSocketHandler {
+
 
 
     private final ObjectMapper objectMapper;
@@ -39,32 +42,39 @@ public class SignalWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
-        log.info("WebSocket 连接建立 sessionId={}", session.getId());
-        log.info("userId: {}", session.getAttributes().get("userId"));
+        String userId = session.getAttributes().get("userId").toString();
+        log.info("从session中获取到userId: {}", userId);
+        //存入SessionStore
+        SessionStore.add(userId, session);
+
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws JsonProcessingException {
-        // 1️⃣ 原始 JSON
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        // 原始 JSON
         String payload = message.getPayload();
-        log.info("收到信令消息 sessionId={}, payload={}", session.getId(), payload);
 
 
-        // 2️⃣ 反序列化
-        SignalMessage signal = objectMapper.readValue(payload, SignalMessage.class);
+        // 反序列化
+        SignalMessage signalMessage = objectMapper.readValue(payload, SignalMessage.class);
+        log.info("收到信令消息 sessionId={}, type={}, payload={}", session.getId(), signalMessage.getType(), payload);
 
-        // 3️⃣ 路由
-        SignalHandler handler = handlerMap.get(signal.getType());
+        // 路由
+        SignalHandler handler = handlerMap.get(signalMessage.getType());
+        log.info("路由到 handler={}", handler);
         if (handler == null) {
             throw new BizException(ErrorCode.UNKNOWN_SIGNAL_TYPE);
         }
 
-        // 4️⃣ 交给 handler
-        handler.handle(signal, session);
+
+        // 交给 handler
+        handler.handle(signalMessage, session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, @NonNull CloseStatus status) {
-        log.info("WebSocket 连接关闭 sessionId={}, status={}", session.getId(), status);
+        String userId = session.getAttributes().get("userId").toString();
+        SessionStore.remove(userId); // 必须移除！
+        log.info("清理 Session: {}", userId);
     }
 }
