@@ -32,3 +32,10 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: files-service
+          uri: lb://files-service
+          predicates:
+            - Path=/files/**
+          filters:
+            - StripPrefix=1
+

@@ -1,0 +1,19 @@
+server:
+  port: 7896
+
+spring:
+  application:
+    name: files-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+  config:
+    import:
+      - optional:nacos:application.yaml
+
+
+mybatis-plus:
+  mapper-locations: classpath*:com/nuliyang/mapper/*.xml

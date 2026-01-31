@@ -7,7 +7,6 @@ import com.nuliyang.dto.RegisterDto;
 import com.nuliyang.result.Result;
 import com.nuliyang.service.AuthService;
 import com.nuliyang.vo.UserVo;
-import io.seata.spring.annotation.GlobalTransactional;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +45,7 @@ public class AuthController {
     @PostMapping("/login")
     public Result<?> login(@RequestBody LoginDto loginDto,
                                 HttpServletResponse response) {
+        log.info("用户登录：{}", loginDto);
         UserVo userVo = authService.login(loginDto);
         log.info("用户登录成功：{}", userVo);
         String token = JwtUtil.generateToken(userVo.getId());

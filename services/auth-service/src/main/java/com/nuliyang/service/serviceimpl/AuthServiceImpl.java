@@ -15,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -37,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 
         UserEntity user = new UserEntity()
                 .setPassword(registerDto.getPassword())
-                .setUsername(registerDto.getUsername());
+                .setUserName(registerDto.getUserName());
 
 
         //如果存在则返回错误
@@ -49,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(BCrypt.hashpw(registerDto.getPassword(), BCrypt.gensalt()));
         userFeign.addUser(user);
 
-        UserEntity userEntity = userFeign.getUserByUsername(user.getUsername()).getData();
+        UserEntity userEntity = userFeign.getUserByUsername(user.getUserName()).getData();
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userEntity, userVo);
 
@@ -64,7 +63,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserVo login(LoginDto loginDto) {
         //先查出用户
-        Result<UserEntity> result = userFeign.getUserByUsername(loginDto.getUsername());
+        Result<UserEntity> result = userFeign.getUserByUsername(loginDto.getUserName());
         //返回状态码为500则说明用户不存在
         if (result.getCode().equals(500)) {
             throw new BizException(ErrorCode.USER_NOT_FOUND);

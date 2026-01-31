@@ -1,7 +1,6 @@
 package com.nuliyang.filter;
 
-import com.nuliyang.BizException;
-import com.nuliyang.ErrorCode;
+
 import com.nuliyang.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -28,7 +27,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                              GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-        ServerHttpResponse response = exchange.getResponse();
 
         String path = request.getURI().getPath();
 
@@ -39,11 +37,17 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        if (path.contains("/admin_nuliyang/upload")){
+            log.info("放行管理员上传头像接口: {}",  path);
+            return chain.filter(exchange);
+        }
+
         // 2️⃣ 获取 Authorization
         String authorization = request.getHeaders().getFirst("Authorization");
 
         if (authorization == null || authorization.isEmpty()) {
-            return unauthorized(response, "未登录");
+            log.error("未提供 Authorization 头");
+            return unauthorized(exchange.getResponse(), "TOKEN_INVALID");
         }
 
         try {
@@ -53,7 +57,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
             Date expiration = JwtUtil.parseToken(authorization).getExpiration();
             if (expiration.before(new Date())) {
-                throw new BizException(ErrorCode.TOKEN_INVALID);
+                log.warn("Token 已过期");
+                return unauthorized(exchange.getResponse(), "TOKEN_EXPIRED");
             }
 
             // 4️⃣ 把用户信息传给下游服务
@@ -66,7 +71,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                     .build());
 
         } catch (Exception e) {
-            log.error("Token 无效   ", e);
+            log.error("Token 解析失败", e);
             return unauthorized(exchange.getResponse(), "TOKEN_INVALID");
         }
     }
@@ -83,6 +88,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                 .setContentType(MediaType.APPLICATION_JSON);
 
         String body = "{\"code\":401,\"msg\":\"" + msg + "\"}";
+
+        log.info("返回 401 响应: {}", body);
         DataBuffer buffer = response.bufferFactory()
                 .wrap(body.getBytes(StandardCharsets.UTF_8));
 

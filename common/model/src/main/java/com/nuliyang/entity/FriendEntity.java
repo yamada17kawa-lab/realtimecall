@@ -10,8 +10,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
-
 @Data
 @TableName("user_friend")
 @Accessors(chain = true)
@@ -29,8 +27,8 @@ public class FriendEntity {
 
     //0离线 1在线
     @TableField("status")
-    private String status;
+    private Integer status;
 
     @TableField("created_at")
-    private LocalDateTime createdAt;
+    private Long createdAt;
 }

@@ -7,14 +7,11 @@
     <update id="updateUser">
         update user
         <set>
-            <if test="username != null">
-                username = #{username},
-            </if>
             <if test="newPassword != null">
                 password = #{newPassword},
             </if>
-            <if test="nickname != null">
-                nickname = #{nickname},
+            <if test="nickName != null">
+                nick_name = #{nickName},
             </if>
             <if test="phone != null">
                 phone = #{phone},
@@ -27,6 +24,9 @@
             </if>
             <if test="isDeleted != null">
                 is_deleted = #{isDeleted},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
             </if>
         </set>
         where id = #{userId}
@@ -41,28 +41,66 @@
     </insert>
 
 
-    <select id="getFriendListByUserId"
-            resultType="com.nuliyang.vo.UserVo">
+    <!-- UserMapper.xml -->
+    <select id="getFriendListByUserId" resultType="com.nuliyang.vo.UserVo">
+        SELECT
+        u.id,
+        u.user_name AS userName,      <!-- 显式别名映射 -->
+        u.nick_name AS nickName,     <!-- 显式别名映射 -->
+        u.email,
+        u.phone,
+        u.avatar,
+        u.status
+        FROM user_friend uf
+        LEFT JOIN `user` u ON u.id = uf.friend_id
+        WHERE uf.user_id = #{userId} or uf.friend_id = #{userId}
+        ORDER BY
+        u.status DESC,
+        u.user_name COLLATE utf8mb4_general_ci ASC  <!-- 修正为 user_name -->
+    </select>
 
+
+    <select id="search" resultType="com.nuliyang.vo.UserVo">
         SELECT
             u.id,
-            u.username,
-            u.nickname,
+            u.user_name AS userName,
+            u.nick_name AS nickName,
             u.email,
             u.phone,
             u.avatar,
-            uf.status AS isOnline
-        FROM user_friend uf
-        LEFT JOIN `user` u
-            ON u.id = uf.friend_id
-        WHERE uf.user_id = #{userId}
-          AND u.status = 0
-        ORDER BY
-            isOnline DESC,
-            u.username COLLATE utf8mb4_zh_0900_as_cs ASC
-
-
+            u.status
+        FROM `user` u
+                 LEFT JOIN user_friend uf ON uf.friend_id = u.id AND uf.user_id = #{userId}
+                 LEFT JOIN add_friend af ON af.friend_id = u.id AND af.user_id = #{userId}
+        WHERE
+            (u.nick_name LIKE CONCAT('%', REPLACE(#{param}, '\\', '\\\\'), '%')
+                OR u.user_name LIKE CONCAT('%', REPLACE(#{param}, '\\', '\\\\'), '%')
+                OR u.id = #{param})
+          AND uf.friend_id IS NULL
+          AND af.friend_id IS NULL
+          AND u.id != #{userId}
+        ORDER BY u.status DESC, u.user_name COLLATE utf8mb4_general_ci ASC
 
     </select>
+
+
+
+    <select id="getUserByNickName" resultType="com.nuliyang.vo.UserVo">
+        SELECT
+            u.id,
+            u.user_name AS userName,      <!-- 显式别名映射 -->
+            u.nick_name AS nickName,     <!-- 显式别名映射 -->
+            u.email,
+            u.phone,
+            u.avatar,
+            u.is_deleted AS isDeleted,
+            u.status AS isOnline
+        FROM `user` u
+        WHERE nick_name LIKE CONCAT('%', #{nickname}, '%')
+        ORDER BY
+        isOnline DESC,
+        u.user_name COLLATE utf8mb4_general_ci ASC
+    </select>
+
 
 </mapper>

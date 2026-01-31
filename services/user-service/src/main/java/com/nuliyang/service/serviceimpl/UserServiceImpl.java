@@ -1,11 +1,14 @@
 package com.nuliyang.service.serviceimpl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.nuliyang.BizException;
 import com.nuliyang.ErrorCode;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
+import com.nuliyang.mapper.FriendMapper;
 import com.nuliyang.mapper.UserMapper;
 import com.nuliyang.service.UserService;
 import com.nuliyang.vo.UserVo;
@@ -16,9 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -30,6 +30,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     private final UserMapper userMapper;
 
+    private final FriendMapper friendMapper;
+
     /**
      * 添加用户
      * @param userEntity
@@ -39,13 +41,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public void adduser(UserEntity userEntity) {
         //先根据用户名从数据库中查出是否已存在
         //如果存在则返回错误
-        if (userMapper.findByUsername(userEntity.getUsername()) != null) {
-            log.error("用户名已存在: {}", userEntity.getUsername());
+        if (userMapper.findByUsername(userEntity.getUserName()) != null) {
+            log.error("用户名已存在: {}", userEntity.getUserName());
             throw new BizException(ErrorCode.USERNAME_ALREADY_EXISTS);
         }
 
         //不存在添加该用户
         userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
+        userEntity.setCreateTime(System.currentTimeMillis());
+        userEntity.setUpdateTime(System.currentTimeMillis());
         userMapper.insert(userEntity);
     }
 
@@ -58,6 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Override
     public UserEntity getUserByUsername(String username) {
         UserEntity user = userMapper.findByUsername(username);
+        log.info("根据用户名查询到用户: {}", user);
         if (user == null){
             //用户不存在
             log.error("用户不存在: {}", username);
@@ -77,12 +82,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         //0 不修改密码 1 修改密码
         //不改密码
         if (userUpdateDto.getIsUpdatePassword() == 0) {
-            UserEntity userEntity = userMapper.findByUsername(userUpdateDto.getUsername());
-            if (userEntity != null && !userEntity.getId().equals(userUpdateDto.getUserId())) {
-                throw new BizException(ErrorCode.USERNAME_ALREADY_EXISTS);
-            }
+            log.info("不改密码");
+            userUpdateDto.setUpdateTime(System.currentTimeMillis());
+
             userMapper.updateUser(userUpdateDto);
-            UserEntity userEntity1 = userMapper.findByUsername(userUpdateDto.getUsername());
+            UserEntity userEntity1 = userMapper.findByUsername(userUpdateDto.getUserName());
             UserVo userVo = new UserVo();
             BeanUtils.copyProperties(userEntity1, userVo);
             return userVo;
@@ -90,14 +94,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
         //修改密码
         else if (userUpdateDto.getIsUpdatePassword() == 1){
+            log.info("改密码");
             //对比旧密码
             //密码不一样报错
-            if (!BCrypt.checkpw(userUpdateDto.getOldPassword(), userMapper.findByUsername(userUpdateDto.getUsername()).getPassword())) {
+            if (!BCrypt.checkpw(userUpdateDto.getOldPassword(), userMapper.findByUsername(userUpdateDto.getUserName()).getPassword())) {
                 throw new BizException(ErrorCode.PASSWORD_ERROR);
             }else {
+                userUpdateDto.setUpdateTime(System.currentTimeMillis());
                 userUpdateDto.setNewPassword(BCrypt.hashpw(userUpdateDto.getNewPassword(), BCrypt.gensalt()));
+
                 userMapper.updateUser(userUpdateDto);
-                UserEntity userEntity = userMapper.findByUsername(userUpdateDto.getUsername());
+                UserEntity userEntity = userMapper.findByUsername(userUpdateDto.getUserName());
                 UserVo userVo = new UserVo();
                 BeanUtils.copyProperties(userEntity, userVo);
                 return userVo;
@@ -115,8 +122,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     public void deleteUser(Long userId) {
         //删除自己
         userMapper.deleteUserById(userId);
+        log.info("删除用户: {}", userId);
         //删除好友
         userMapper.deleteFriendsByUserId(userId);
+        log.info("删除用户: {} 的所有好友", userId);
     }
 
 
@@ -124,10 +133,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 添加好友
      * @param friendEntity
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void addFriend(FriendEntity friendEntity) {
         //先查是否有这个好友
-        if (userMapper.findUserById(friendEntity.getFriendId()) == null) {
+        if (userMapper.findUserById(friendEntity.getUserId()) == null) {
             throw new BizException(ErrorCode.FRIEND_NOT_FOUND);
         }
         //检查friend_id是否是自己
@@ -139,10 +149,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (friendIds.contains(friendEntity.getFriendId())) {
             throw new BizException(ErrorCode.FRIEND_ALREADY_EXISTS);
         }
-        //给好友设置默认值
-        friendEntity.setCreatedAt(LocalDateTime.parse(LocalDateTime.now().toString()));
-        friendEntity.setStatus("0");
+        //给好友设置创建时间
+        friendEntity.setCreatedAt(System.currentTimeMillis());
+        //给好友获取在线离线状态
+        friendEntity.setStatus(userMapper.getUserById(friendEntity.getFriendId()).getStatus() );
+        log.info("添加好友: {}", friendEntity);
         userMapper.addFriend(friendEntity);
+        //添加好友成功后，然后删除申请表的相关数据
+        friendMapper.deleteByUserId(friendEntity.getUserId());
     }
 
     /**
@@ -167,14 +181,71 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
 
     /**
+     * 根据id获取用户
+     * @param userId
+     * @return
+     */
+    @Override
+    public UserVo getUserById(Long userId) {
+        UserVo userVo = userMapper.getUserById(userId);
+        if (userVo == null){
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
+        }
+        return userVo;
+    }
+
+
+
+
+    /**
      * 获取好友列表
      */
     @Override
-    public List<UserVo> getFriendList(Long userId) {
-        //获取好友列表
-        List<UserVo> friendList = userMapper.getFriendListByUserId(userId);
-        //列表为空则返回空列表
-        if (friendList == null) return Collections.emptyList();
-        return friendList;
+    public IPage<UserVo> getFriendList(Long userId, long current, long size) {
+        Page<UserVo> page = new Page<>(current, size);
+        return userMapper.getFriendListByUserId(page, userId);
     }
+
+
+    /**
+     * 根据昵称获取用户
+     * @param nickname
+     * @return
+     */
+    @Override
+    public IPage<UserVo> getUserByNickName(String nickname, long current, long size) {
+        IPage<UserVo> page = new Page<>(current, size);
+        return userMapper.getUserByNickName(page, nickname);
+    }
+
+
+    /**
+     * 搜索用户
+     * @param param
+     * @param userId
+     * @param current
+     * @param size
+     * @return
+     */
+    @Override
+    public IPage<UserVo> search(String param, Long userId, long current, long size) {
+        //查出当前用户
+        UserVo userVo = userMapper.getUserById(userId);
+        if (userVo == null) {
+            throw new BizException(ErrorCode.USER_NOT_FOUND);
+        }
+        //检查是不是搜索自己
+        if (param.equals(userVo.getNickName()) || param.equals(userVo.getId().toString())) {
+            throw new BizException(ErrorCode.SEARCH_SELF);
+        }
+        //开始查询
+        //已经添加的好友就不参与搜索，过滤掉
+        Page<UserVo> page = new Page<>(current, size);
+        return userMapper.search(page, param, userId);
+
+    }
+
+
+
+
 }

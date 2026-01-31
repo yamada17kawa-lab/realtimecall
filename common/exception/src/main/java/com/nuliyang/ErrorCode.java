@@ -19,7 +19,8 @@ public enum ErrorCode {
     USERNAME_ALREADY_EXISTS(10007, "用户名已存在"),
     USER_NOT_FOUND(500, "用户不存在"),
     TOKEN_INVALID(401, "Token无效"),
-    UNKNOWN_SIGNAL_TYPE(400, "未知的信令类型");
+    UNKNOWN_SIGNAL_TYPE(400, "未知的信令类型"),
+    SEARCH_SELF(1008, "不能搜索自己");
 
     private final int code;
     private final String message;

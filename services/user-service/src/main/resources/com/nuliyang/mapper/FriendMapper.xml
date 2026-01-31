@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nuliyang.mapper.FriendMapper">
+    <select id="getAddFriendByUserId" resultType="com.nuliyang.vo.UserVo">
+        SELECT
+            u.id,
+            u.user_name AS userName,
+            u.nick_name AS nickName,
+            u.email,
+            u.phone,
+            u.avatar,
+            u.status
+        FROM `user` AS u
+                 INNER JOIN add_friend AS af ON u.id = af.user_id
+        WHERE af.friend_id = #{userId}
+        ORDER BY
+            u.status DESC,
+            u.user_name COLLATE utf8mb4_general_ci ASC
+
+    </select>
+
+</mapper>

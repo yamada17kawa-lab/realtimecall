@@ -14,6 +14,7 @@
     <modules>
         <module>auth-service</module>
         <module>user-service</module>
+        <module>files-service</module>
     </modules>
 
     <artifactId>services</artifactId>
@@ -26,6 +27,12 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
 
         <!-- 引用common的Utils模块 -->

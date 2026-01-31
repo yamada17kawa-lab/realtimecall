@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import java.time.LocalDateTime;
 
 @Data
 @Accessors(chain = true)
@@ -24,8 +23,8 @@ public class UserEntity {
     /**
      * 用户名（唯一，登录用）
      */
-    @TableField(value = "username", condition = SqlCondition.EQUAL)
-    private String username;
+    @TableField(value = "user_name", condition = SqlCondition.EQUAL)
+    private String userName;
 
     /**
      * 加密后的密码（BCrypt）
@@ -36,8 +35,8 @@ public class UserEntity {
     /**
      * 昵称（可选）
      */
-    @TableField("nickname")
-    private String nickname;
+    @TableField("nick_name")
+    private String nickName;
 
     /**
      * 手机号（可选，可用于找回密码）
@@ -58,7 +57,7 @@ public class UserEntity {
     private String avatar;
 
     /**
-     * 账号状态：0-正常，1-禁用
+     * 账号状态：0-离线，1-在线
      */
     @TableField("status")
     private Integer status = 0;
@@ -67,13 +66,13 @@ public class UserEntity {
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private Long createTime;
 
     /**
      * 更新时间
      */
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private Long updateTime;
 
     /**
      * 逻辑删除标识：0-未删除，1-已删除

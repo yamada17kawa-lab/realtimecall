@@ -2,7 +2,10 @@
 <project version="4">
   <component name="DataSourcePerFileMappings">
     <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/5f59208b-1494-4d8b-83f5-022a683b96fd/console.sql" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
+    <file url="file://$PROJECT_DIR$/services/files-service/src/main/java/com/nuliyang/mapper/FilesMapper.java" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
+    <file url="file://$PROJECT_DIR$/services/user-service/src/main/java/com/nuliyang/mapper/FriendMapper.java" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
     <file url="file://$PROJECT_DIR$/services/user-service/src/main/java/com/nuliyang/mapper/UserMapper.java" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
+    <file url="file://$PROJECT_DIR$/services/user-service/src/main/resources/com/nuliyang/mapper/FriendMapper.xml" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
     <file url="file://$PROJECT_DIR$/services/user-service/src/main/resources/com/nuliyang/mapper/UserMapper.xml" value="5f59208b-1494-4d8b-83f5-022a683b96fd" />
   </component>
 </project>

@@ -17,6 +17,7 @@
         <module>feign</module>
         <module>utils</module>
         <module>exception</module>
+        <module>config</module>
     </modules>
 
     <properties>

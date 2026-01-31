@@ -1,6 +1,8 @@
 package com.nuliyang.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
@@ -19,18 +21,11 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @param username 用户名
      * @return 用户信息
      */
-    @Select("SELECT * FROM `user` WHERE username = #{username}")
+    @Select("SELECT * FROM `user` WHERE user_name = #{username}")
     UserEntity findByUsername(String username);
 
 
-    /**
-     * 添加用户
-     *
-     * @param username 用户名
-     * @param password 密码
-     */
-    @Insert("INSERT INTO `user` (username, password) VALUES (#{username}, #{password})")
-    void addUser(String username, String password);
+
 
 
     /**
@@ -99,5 +94,36 @@ public interface UserMapper extends BaseMapper<UserEntity> {
      * @param userId 用户id
      * @return 好友列表
      */
-    List<UserVo> getFriendListByUserId(Long userId);
+    // 分页查询好友列表
+    IPage<UserVo> getFriendListByUserId(Page<UserVo> page, @Param("userId") Long userId);
+
+
+    /**
+     * 根据userId获取用户信息
+     * @param userId 用户id
+     * @return 用户信息
+     */
+    @Select("SELECT * FROM `user` WHERE id = #{userId}")
+    UserVo getUserById(Long userId);
+
+
+    /**
+     * 根据昵称查询用户
+     * @param nickname 昵称
+     * @return 用户列表
+     */
+    @Select("SELECT * FROM `user` WHERE nick_name LIKE CONCAT('%', #{nickname}, '%')")
+    IPage<UserVo> getUserByNickName(IPage<UserVo> page, String nickname);
+
+
+    /**
+     * 搜索用户
+     * @param param 搜索参数
+     * @param userId 用户id
+     * @return 用户列表
+     */
+    IPage<UserVo> search(Page<UserVo> page, String param, Long userId);
+
+
+
 }

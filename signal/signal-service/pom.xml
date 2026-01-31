@@ -21,6 +21,12 @@
     <dependencies>
 
 
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>config</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- 导入自定义utils模块 -->
         <dependency>
             <groupId>com.example</groupId>

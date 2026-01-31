@@ -1,11 +1,11 @@
 package com.nuliyang.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
 import com.nuliyang.vo.UserVo;
 
-import java.util.List;
 
 public interface UserService {
 
@@ -54,5 +54,31 @@ public interface UserService {
      * @param userId
      * @return
      */
-    List<UserVo> getFriendList(Long userId);
+    IPage<UserVo> getFriendList(Long userId, long current, long size);
+
+
+    /**
+     * 根据id查询用户
+     * @param userId
+     * @return
+     */
+    UserVo getUserById(Long userId);
+
+
+    /**
+     * 根据昵称查询用户
+     * @param nickname
+     * @return
+     */
+    IPage<UserVo> getUserByNickName(String nickname, long current, long size);
+
+    /**
+     * 搜索用户
+     * @param param
+     * @param userId
+     * @return
+     */
+    IPage<UserVo> search(String param, Long userId, long current, long size);
+
+
 }
