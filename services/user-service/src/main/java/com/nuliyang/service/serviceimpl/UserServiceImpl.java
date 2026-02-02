@@ -136,6 +136,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void addFriend(FriendEntity friendEntity) {
+        Long myId = friendEntity.getUserId();
+        log.info("myId； {}", myId);
+
         //先查是否有这个好友
         if (userMapper.findUserById(friendEntity.getUserId()) == null) {
             throw new BizException(ErrorCode.FRIEND_NOT_FOUND);
@@ -153,10 +156,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         friendEntity.setCreatedAt(System.currentTimeMillis());
         //给好友获取在线离线状态
         friendEntity.setStatus(userMapper.getUserById(friendEntity.getFriendId()).getStatus() );
-        log.info("添加好友: {}", friendEntity);
+        log.info("添加好友第一条数据: {}", friendEntity);
+        //添加好友第一条数据
+        userMapper.addFriend(friendEntity);
+
+
+        //添加好友第二条数据
+        Long friendId = friendEntity.getUserId();
+        Long userId = friendEntity.getFriendId();
+        friendEntity.setUserId(userId);
+        friendEntity.setFriendId(friendId);
+        //给好友获取在线离线状态
+        friendEntity.setStatus(userMapper.getUserById(friendEntity.getFriendId()).getStatus() );
+        log.info("添加好友第二条数据: {}", friendEntity);
         userMapper.addFriend(friendEntity);
         //添加好友成功后，然后删除申请表的相关数据
-        friendMapper.deleteByUserId(friendEntity.getUserId());
+        Integer num = friendMapper.deleteApplyByUserId(myId);
+        log.info("删除申请表数据{}条", num);
     }
 
     /**
@@ -174,8 +190,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!friendIds.contains(friendId)) {
             throw new BizException(ErrorCode.FRIEND_NOT_FOUND);
         }
-        //删除好友
+        //删除好友数据一
         userMapper.deleteFriendByUserIdAndFriendId(userId, friendId);
+
+        //删除好友数据二
+        userMapper.deleteFriendByUserIdAndFriendId(friendId, userId);
 
     }
 

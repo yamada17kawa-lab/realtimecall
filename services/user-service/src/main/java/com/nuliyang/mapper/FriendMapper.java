@@ -36,5 +36,8 @@ public interface FriendMapper {
      * @param userId
      */
     @Delete("DELETE FROM add_friend WHERE user_id = #{userId}")
-    void deleteByUserId(Long userId);
+    Integer deleteApplyByUserId(Long userId);
+
+
+
 }

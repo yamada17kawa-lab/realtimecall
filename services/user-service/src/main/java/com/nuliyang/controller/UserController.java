@@ -105,6 +105,7 @@ public class UserController {
     @PostMapping("/friend/add/{userId}")
     public Result<String> addFriend(@PathVariable Long userId,
                                     HttpServletRequest request) {
+        log.info("进来控制层的参数为: {}", userId);
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // 去掉 "Bearer "

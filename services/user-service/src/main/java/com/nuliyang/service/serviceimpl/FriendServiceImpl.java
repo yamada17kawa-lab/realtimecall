@@ -8,12 +8,14 @@ import com.nuliyang.service.FriendService;
 import com.nuliyang.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService {
 
     private final FriendMapper friendMapper;
+
 
 
     /**
@@ -32,11 +34,22 @@ public class FriendServiceImpl implements FriendService {
      * @param userId
      * @param friendId
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void applyFriend(Long userId, Long friendId) {
         friendMapper.insertAddFriend(userId, friendId);
     }
 
+
+    /**
+     * 删除好友申请
+     * @param userId
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void deleteApply(Long userId) {
+        friendMapper.deleteApplyByUserId(userId);
+    }
 
 
 }

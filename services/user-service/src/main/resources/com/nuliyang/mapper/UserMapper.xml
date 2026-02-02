@@ -53,7 +53,7 @@
         u.status
         FROM user_friend uf
         LEFT JOIN `user` u ON u.id = uf.friend_id
-        WHERE uf.user_id = #{userId} or uf.friend_id = #{userId}
+        WHERE uf.user_id = #{userId}
         ORDER BY
         u.status DESC,
         u.user_name COLLATE utf8mb4_general_ci ASC  <!-- 修正为 user_name -->

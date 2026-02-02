@@ -24,4 +24,9 @@ public interface FriendService {
     void applyFriend(Long userId, Long friendId);
 
 
+    /**
+     * 删除好友申请
+     * @param userId
+     */
+    void deleteApply(Long userId);
 }

@@ -10,10 +10,7 @@ import com.nuliyang.vo.UserVo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -23,8 +20,6 @@ public class FriendController {
 
 
     private final FriendService friendService;
-
-
 
 
 
@@ -72,5 +67,15 @@ public class FriendController {
 
 
         return Result.error("获取好友申请数据失败");
+    }
+
+
+    /**
+     * 删除好友申请
+     */
+    @GetMapping("/apply/delete/{userId}")
+    public Result<String> deleteApply(@PathVariable Long userId) {
+        friendService.deleteApply(userId);
+        return Result.success("删除好友申请成功");
     }
 }
