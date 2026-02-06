@@ -1,3 +1,27 @@
 server:
   port: 6666
 
+
+
+
+spring:
+  application:
+    name: signal-service
+  data:
+    redis:
+      host: localhost    # Redis 服务器地址
+      port: 6379         # 端口，默认就是 6379
+      password:          # 如果没设密码，这里空着就行
+      lettuce:           # 这是一个常用的连接驱动
+        pool:
+          max-active: 8  # 最大连接数，个人项目够用了
+  datasource:
+    url: jdbc:mysql://localhost:3306/realtimecall?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: yee23
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848

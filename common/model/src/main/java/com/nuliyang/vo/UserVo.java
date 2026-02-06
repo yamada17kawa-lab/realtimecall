@@ -12,6 +12,10 @@ public class UserVo {
     private String email;
     private String phone;
     private String avatar;
+
+    //辅助信令服务的字段
+    private String roomId;
+
     //0 离线 1 在线
     private Integer status = 0;
 }

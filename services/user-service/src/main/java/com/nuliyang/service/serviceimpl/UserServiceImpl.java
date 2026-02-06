@@ -3,8 +3,11 @@ package com.nuliyang.service.serviceimpl;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nuliyang.BizException;
 import com.nuliyang.ErrorCode;
+import com.nuliyang.RedisUtil;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
@@ -30,7 +33,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
 
     private final UserMapper userMapper;
 
+    private final ObjectMapper objectMapper;
     private final FriendMapper friendMapper;
+    private final RedisUtil redisUtil;
 
     /**
      * 添加用户
@@ -38,7 +43,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void adduser(UserEntity userEntity) {
+    public UserVo adduser(UserEntity userEntity) {
         //先根据用户名从数据库中查出是否已存在
         //如果存在则返回错误
         if (userMapper.findByUsername(userEntity.getUserName()) != null) {
@@ -47,10 +52,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         }
 
         //不存在添加该用户
+        userEntity.setStatus(0);
         userEntity.setPassword(BCrypt.hashpw(userEntity.getPassword(), BCrypt.gensalt()));
         userEntity.setCreateTime(System.currentTimeMillis());
         userEntity.setUpdateTime(System.currentTimeMillis());
         userMapper.insert(userEntity);
+        UserEntity userEntity1 = userMapper.findByUsername(userEntity.getUserName());
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(userEntity1, userVo);
+        return userVo;
     }
 
 
@@ -220,10 +230,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * 获取好友列表
      */
     @Override
-    public IPage<UserVo> getFriendList(Long userId, long current, long size) {
+    public IPage<UserVo> getFriendList(Long userId, long current, long size) throws JsonProcessingException {
         Page<UserVo> page = new Page<>(current, size);
-        return userMapper.getFriendListByUserId(page, userId);
+        IPage<UserVo> friendList = userMapper.getFriendListByUserId(page, userId);
+
+        // 遍历好友列表，获取并更新用户信息
+        for (UserVo userVo : friendList.getRecords()) {
+            Long id = userVo.getId();
+            //从redis获取用户
+            String userJson = redisUtil.get("ws:user:" + id);
+            //有就改状态
+            if ( userJson != null) {
+                UserEntity userEntity = objectMapper.readValue(userJson, UserEntity.class);
+                userVo.setStatus(userEntity.getStatus()).setRoomId(userEntity.getRoomId());
+            }
+        }
+        return friendList;
     }
+
 
 
     /**
@@ -247,7 +271,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
      * @return
      */
     @Override
-    public IPage<UserVo> search(String param, Long userId, long current, long size) {
+    public IPage<UserVo> search(String param, Long userId, long current, long size) throws JsonProcessingException {
         //查出当前用户
         UserVo userVo = userMapper.getUserById(userId);
         if (userVo == null) {
@@ -260,8 +284,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         //开始查询
         //已经添加的好友就不参与搜索，过滤掉
         Page<UserVo> page = new Page<>(current, size);
-        return userMapper.search(page, param, userId);
+        IPage<UserVo> userVoIPage = userMapper.search(page, param, userId);
 
+
+        // 遍历好友列表，获取并更新用户信息
+        for (UserVo userVo2 : userVoIPage.getRecords()) {
+            Long id = userVo2.getId();
+            //从redis获取用户
+            String userJson = redisUtil.get("ws:user:" + id);
+            //有就改状态
+            if ( userJson != null) {
+                UserEntity userEntity = objectMapper.readValue(userJson, UserEntity.class);
+                userVo2.setStatus(userEntity.getStatus()).setRoomId(userEntity.getRoomId());
+            }
+        }
+        return userVoIPage;
     }
 
 

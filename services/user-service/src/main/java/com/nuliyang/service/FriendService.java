@@ -1,6 +1,7 @@
 package com.nuliyang.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nuliyang.vo.UserVo;
 
 public interface FriendService {
@@ -13,7 +14,7 @@ public interface FriendService {
      * @param size
      * @return
      */
-    IPage<UserVo> getApply(Long userId, long current, long size);
+    IPage<UserVo> getApply(Long userId, long current, long size) throws JsonProcessingException;
 
 
     /**

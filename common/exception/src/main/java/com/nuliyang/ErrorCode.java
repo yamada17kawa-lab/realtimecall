@@ -20,7 +20,8 @@ public enum ErrorCode {
     USER_NOT_FOUND(500, "用户不存在"),
     TOKEN_INVALID(401, "Token无效"),
     UNKNOWN_SIGNAL_TYPE(400, "未知的信令类型"),
-    SEARCH_SELF(1008, "不能搜索自己");
+    SEARCH_SELF(1008, "不能搜索自己"),
+    ROOM_NOT_FOUND(1009, "房间不存在");
 
     private final int code;
     private final String message;

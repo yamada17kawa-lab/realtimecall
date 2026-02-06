@@ -2,6 +2,7 @@ package com.nuliyang.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nuliyang.JwtUtil;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
@@ -45,9 +46,8 @@ public class UserController {
      * 添加用户
      */
     @PostMapping("/adduser")
-    public Result<String> addUser(@RequestBody UserEntity userEntity) {
-        userService.adduser(userEntity);
-        return Result.success("添加用户成功");
+    public Result<UserVo> addUser(@RequestBody UserEntity userEntity) {
+        return Result.success("添加用户成功", userService.adduser(userEntity));
     }
 
 
@@ -67,18 +67,22 @@ public class UserController {
     @PostMapping("/updateUser")
     public Result<UserVo> updateUser(@RequestBody UserUpdateDto userUpdateDto,
                                      HttpServletRequest request) {
-        log.info("进来控制层的参数为: {}", userUpdateDto.toString());
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // 去掉 "Bearer "
             Long userId = Long.valueOf(JwtUtil.parseToken(token).getSubject());
             userUpdateDto.setUserId(userId);
             UserVo userVo = userService.updateUser(userUpdateDto);
-            log.info("更新用户信息: {}", userVo);
+            return Result.success("更新用户成功", userVo);
+        } else if (userUpdateDto.getUserId() != null) {
+            Long userId = userUpdateDto.getUserId();
+            userUpdateDto.setUserId(userId);
+            UserVo userVo = userService.updateUser(userUpdateDto);
             return Result.success("更新用户成功", userVo);
         }
         return Result.error("更新用户失败");
     }
+
 
 
     /**
@@ -142,12 +146,13 @@ public class UserController {
     public Result<PageResult<UserVo>> getFriendList(
             HttpServletRequest request,
             @RequestParam(defaultValue = "1") long current,
-            @RequestParam(defaultValue = "9") long size) {
+            @RequestParam(defaultValue = "9") long size) throws JsonProcessingException {
 
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             Long userId = Long.valueOf(JwtUtil.parseToken(token).getSubject());
+            log.info("分页参数 :{}, {}", current, size);
 
             IPage<UserVo> page = userService.getFriendList(userId, current, size);
 
@@ -156,6 +161,7 @@ public class UserController {
                     page.getTotal(),
                     page.getPages()
             );
+            log.info("好友列表数据: {}",  result);
             return Result.success("获取好友列表成功", result);
         }
         return Result.error("获取好友列表失败");
@@ -199,7 +205,7 @@ public class UserController {
     public Result<PageResult<UserVo>> search(@PathVariable String param,
                                              HttpServletRequest request,
                                              @RequestParam(defaultValue = "1") long current,
-                                             @RequestParam(defaultValue = "9") long size) {
+                                             @RequestParam(defaultValue = "9") long size) throws JsonProcessingException {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // 去掉 "Bearer "
@@ -216,8 +222,6 @@ public class UserController {
         }
         return Result.error("查询用户失败");
     }
-
-
 
 
 

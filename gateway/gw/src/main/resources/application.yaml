@@ -39,3 +39,12 @@ spring:
           filters:
             - StripPrefix=1
 
+      # 信令服务路由配置
+        - id: signal-service
+      # 使用 lb:ws:// 启用负载均衡并指定 WebSocket 协议
+          uri: lb:ws://signal-service
+          predicates:
+            # 匹配你在 Apifox 中测试的路径
+            - Path=/wsnuliyang/**
+
+

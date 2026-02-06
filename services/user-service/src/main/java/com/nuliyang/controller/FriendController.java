@@ -2,6 +2,7 @@ package com.nuliyang.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nuliyang.JwtUtil;
 import com.nuliyang.result.PageResult;
 import com.nuliyang.result.Result;
@@ -49,7 +50,7 @@ public class FriendController {
     @GetMapping("/getApply")
     public Result<PageResult<UserVo>> getApply(HttpServletRequest request,
                                                @RequestParam(defaultValue = "1") long current,
-                                               @RequestParam(defaultValue = "9") long size) {
+                                               @RequestParam(defaultValue = "9") long size) throws JsonProcessingException {
         String authHeader = request.getHeader("Authorization");
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7); // 去掉 "Bearer "

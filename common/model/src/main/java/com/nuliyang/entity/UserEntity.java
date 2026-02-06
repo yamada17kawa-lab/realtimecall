@@ -20,6 +20,10 @@ public class UserEntity {
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
+
+    //用户表没有的字段，仅仅辅助信令服务
+    private String roomId;
+
     /**
      * 用户名（唯一，登录用）
      */
@@ -57,7 +61,7 @@ public class UserEntity {
     private String avatar;
 
     /**
-     * 账号状态：0-离线，1-在线
+     * 账号状态：0-离线，1-在线 2-正在通话
      */
     @TableField("status")
     private Integer status = 0;
@@ -80,4 +84,6 @@ public class UserEntity {
     @TableLogic
     @TableField("is_deleted")
     private Integer isDeleted = 0;
+
+
 }

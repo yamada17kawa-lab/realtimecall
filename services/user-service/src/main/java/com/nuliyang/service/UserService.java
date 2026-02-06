@@ -1,6 +1,7 @@
 package com.nuliyang.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nuliyang.dto.UserUpdateDto;
 import com.nuliyang.entity.FriendEntity;
 import com.nuliyang.entity.UserEntity;
@@ -13,7 +14,7 @@ public interface UserService {
      * 添加用户
      * @param userEntity
      */
-    void adduser(UserEntity userEntity);
+    UserVo adduser(UserEntity userEntity);
 
 
     /**
@@ -54,7 +55,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    IPage<UserVo> getFriendList(Long userId, long current, long size);
+    IPage<UserVo> getFriendList(Long userId, long current, long size) throws JsonProcessingException;
 
 
     /**
@@ -78,7 +79,7 @@ public interface UserService {
      * @param userId
      * @return
      */
-    IPage<UserVo> search(String param, Long userId, long current, long size);
+    IPage<UserVo> search(String param, Long userId, long current, long size) throws JsonProcessingException;
 
 
 }

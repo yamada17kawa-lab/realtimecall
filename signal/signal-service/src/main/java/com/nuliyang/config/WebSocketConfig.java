@@ -21,7 +21,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(signalWebSocketHandler, "/nuliyang")
+        registry.addHandler(signalWebSocketHandler, "/wsnuliyang")
                 .addInterceptors(authHandshakeInterceptor)
                 .setAllowedOrigins("*");
     }

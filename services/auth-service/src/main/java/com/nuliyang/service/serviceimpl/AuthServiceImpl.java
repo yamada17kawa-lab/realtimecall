@@ -29,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      * 注册
      */
-    @GlobalTransactional
+    @GlobalTransactional(rollbackFor = Exception.class)
     @Override
     public UserVo register(RegisterDto registerDto) {
         //先根据用户名从数据库中查出是否已存在
@@ -46,9 +46,12 @@ public class AuthServiceImpl implements AuthService {
 
         //不存在添加该用户
         user.setPassword(BCrypt.hashpw(registerDto.getPassword(), BCrypt.gensalt()));
+        log.info("插入注册用户信息");
         userFeign.addUser(user);
 
+        log.info("插入用户成功，开始查询");
         UserEntity userEntity = userFeign.getUserByUsername(user.getUserName()).getData();
+        log.info("查询用户成功");
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(userEntity, userVo);
 
